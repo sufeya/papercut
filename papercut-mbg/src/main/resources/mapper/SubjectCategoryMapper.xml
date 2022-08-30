@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lwc.mapper.SubjectCategoryMapper">
+    <resultMap id="baseResult" type="com.lwc.entity.SubjectCategory">
+        <id column="id" property="id"/>
+        <result property="showStatus" column="show_status"/>
+        <result property="subjectCount" column="subject_count"/>
+        <result property="name" column="name"/>
+        <result property="icon" column="icon"/>
+    </resultMap>
+</mapper>

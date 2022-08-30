@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lwc.mapper.CommentMapper">
+    <resultMap id="baseResult" type="com.lwc.entity.Comment">
+        <id column="id" property="id"/>
+        <result property="collectCount" column="collect_count"/>
+        <result property="content" column="content"/>
+        <result property="readCount" column="read_count"/>
+        <result property="createTime" column="create_time"/>
+        <result property="showStatus" column="show_status"/>
+        <result property="star" column="star"/>
+        <result property="userNickName" column="user_nick_name"/>
+        <result property="workId" column="work_id"/>
+        <result property="workName" column="work_name"/>
+        <result property="parentId" column="parent_id"/>
+        <!--递归查询-->
+        <association property="commentReplays" select="findTopCommentByParentIdAndWorkId" column="{workId = work_id,parentId = id}">
+        </association>
+    </resultMap>
+
+    <select id="findTopCommentByParentIdAndWorkId" resultMap="baseResult">
+        select * from ppc_comment as c where c.parent_id = #{parentId} and c.work_id = #{workId}
+    </select>
+</mapper>

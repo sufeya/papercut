@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lwc.mapper.WorkInfoMapper">
+    <resultMap id="BaseResultMap" type="com.lwc.entity.WorkInfo">
+        <id property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="name" column="name"/>
+        <result property="pic" column="pic"/>
+        <result property="description" column="description"/>
+        <result property="detailDesc" column="detail_desc"/>
+        <result property="detailTitle" column="detail_title"/>
+        <result property="keywords" column="keywords"/>
+        <result property="likeCount" column="like_count"/>
+        <result property="pulbicStatus" column="public_status"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+</mapper>

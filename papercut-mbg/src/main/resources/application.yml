@@ -1,0 +1,101 @@
+# Spring 相关
+spring:
+  servlet:
+    multipart:
+      enabled: true #开启文件上传
+      max-file-size: 10MB #限制文件上传大小为10M
+  data:
+    mongodb:
+      host: localhost # mongodb的连接地址
+      port: 27017 # mongodb的连接端口号
+      database: papercut # mongodb的连接的数据库
+  ########-spring datasource-########
+  datasource:
+     #账号配置
+     url: jdbc:mysql://127.0.0.1:3306/papercut?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8
+     username: root
+     password: 123456
+     driver-class-name: com.mysql.cj.jdbc.Driver
+
+     #druid连接池配置
+     type: com.alibaba.druid.pool.DruidDataSource
+     initialSize: 5
+     minIdle: 5
+     maxActive: 20
+     maxWait: 60000
+     timeBetweenEvictionRunsMillis: 60000
+     minEvictableIdleTimeMillis: 300000
+     validationQuery: SELECT 1 FROM DUAL
+     testWhileIdle: true
+     testOnBorrow: false
+     testOnReturn: false
+     poolPreparedStatements: true
+     maxPoolPreparedStatementPerConnectionSize: 20
+     filters: stat,wall,log4j
+     connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+# mybaits-plus配置
+mybatis-plus:
+  mapper-locations: classpath:/mapper/**/*.xml
+  global-config:
+    banner: false
+    db-config:
+      id-type: auto
+      table-underline: true
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+  configuration:
+    map-underscore-to-camel-case: true
+
+jwt:
+  tokenHeader: Authorization #JWT存储的请求头
+  secret: mall-admin-secret #JWT加解密使用的密钥
+  expiration: 604800 #JWT的超期限时间(60*60*24*7)
+  tokenHead: 'Bearer '  #JWT负载中拿到开头
+
+redis:
+  database: papercut
+  key:
+    workLike: 'ppc:workLike'
+    admin: 'ppc:user'
+    workLikeCount: 'ppc:workLikeCount'
+    resourceList: 'ppc:resourceList'
+  expire:
+    common: 86400 # 24小时
+
+secure:
+  ignored:
+    urls: #安全路径白名单
+      - /swagger-ui.html
+      - /swagger-resources/**
+      - /swagger/**
+      - /**/v2/api-docs
+      - /**/*.js
+      - /**/*.css
+      - /**/*.png
+      - /**/*.ico
+      - /webjars/springfox-swagger-ui/**
+      - /actuator/**
+      - /druid/**
+      - /admin/login
+      - /admin/register
+      - /admin/info
+      - /admin/logout
+      - /oss/**
+      - /minio/upload
+      - /static/**
+
+# OSS相关配置信息
+aliyun:
+  oss:
+    endpoint: oss-cn-hangzhou.aliyuncs.com # oss对外服务的访问域名
+    accessKeyId: LTAI5tCV4JSvyvPfNAgheWu3 # 访问身份验证中用到用户标识
+    accessKeySecret: RkpACPx06RqiL0D01UDECAAUqwwgeS # 用户用于加密签名字符串和oss用来验证签名字符串的密钥
+    bucketName: papercut-info # oss的存储空间
+    roleArnacs: acs:ram::1868054816169360:role/aliyunosstokengeneratorrole #ram角色
+    policy:
+      expire: 300 # 签名有效期(S)
+    maxSize: 10 # 上传文件大小(M)
+    callback: https://y4543o3355.oicp.vip/oss/callback # 文件上传成功后的回调地址
+    dir:
+      prefix: papercut/images/ # 上传文件夹路径前缀
+#mongodb 相关信息
