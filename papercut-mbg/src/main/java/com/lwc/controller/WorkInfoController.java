@@ -75,10 +75,10 @@ public class WorkInfoController {
     }
 
     @ApiOperation(value = "/getList",tags = "获取list")
-    @RequestMapping(value = "/getList",method = RequestMethod.GET)
+    @RequestMapping(value = "/getList",method = RequestMethod.POST)
     public CommonResult getList(@RequestBody Page<WorkInfo> page){
         IPage<WorkInfo> result = workInfoService.getList(page);
-        return CommonResult.success(result);
+        return CommonResult.success(result.getRecords());
     }
 
     @ApiOperation(value = "/getOwnerWork",tags = "获取自己的作品")

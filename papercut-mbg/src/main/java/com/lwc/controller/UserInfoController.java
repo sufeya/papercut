@@ -50,7 +50,11 @@ public class UserInfoController {
     @RequestMapping(value = "/login",method = RequestMethod.POST)
     public CommonResult login(@RequestBody UserVo userVo){
         String token = userInfoService.login(userVo);
-        return CommonResult.success(token,"登入成功");
+        if(token == null){
+            return CommonResult.failed("用户名或者密码错误");
+        }else{
+            return CommonResult.success(token,"登入成功");
+        }
     }
 
     @PostMapping("/uploadFile")

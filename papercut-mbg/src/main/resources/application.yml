@@ -12,7 +12,7 @@ spring:
   ########-spring datasource-########
   datasource:
      #账号配置
-     url: jdbc:mysql://127.0.0.1:3306/papercut?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8
+     url: jdbc:mysql://localhost:3306/papercut?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8
      username: root
      password: 123456
      driver-class-name: com.mysql.cj.jdbc.Driver
@@ -53,7 +53,11 @@ jwt:
   tokenHead: 'Bearer '  #JWT负载中拿到开头
 
 redis:
-  database: papercut
+  host: localhost # Redis服务器地址
+  database: 0 # Redis数据库索引（默认为0）
+  port: 6379 # Redis服务器连接端口
+  password: # Redis服务器连接密码（默认为空）
+  timeout: 300ms # 连接超时时间（毫秒）
   key:
     workLike: 'ppc:workLike'
     admin: 'ppc:user'
@@ -80,6 +84,7 @@ secure:
       - /admin/register
       - /admin/info
       - /admin/logout
+      - /admin/hello
       - /oss/**
       - /minio/upload
       - /static/**
@@ -95,7 +100,7 @@ aliyun:
     policy:
       expire: 300 # 签名有效期(S)
     maxSize: 10 # 上传文件大小(M)
-    callback: https://y4543o3355.oicp.vip/oss/callback # 文件上传成功后的回调地址
+    callback: 118.31.37.117:8080/oss/callback # 文件上传成功后的回调地址
     dir:
       prefix: papercut/images/ # 上传文件夹路径前缀
 #mongodb 相关信息

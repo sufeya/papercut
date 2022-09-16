@@ -79,7 +79,7 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
         userInfo.setCreateTime(LocalDateTime.now());
         //查询是否已经注册过
         LambdaQueryWrapper<UserInfo> lambdaQueryWrapper = new LambdaQueryWrapper();
-        lambdaQueryWrapper.eq(UserInfo::getPhone,userInfo.getPhone());
+        lambdaQueryWrapper.eq(UserInfo::getUsername,userInfo.getUsername());
         int count = this.count(lambdaQueryWrapper);
         if(count>0){
             throw new ApiException("注册失败用户已经存在");
@@ -94,16 +94,16 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
     @Override
     public UserInfo getUserByUserName(String userName) {
         //现在redis缓存中进行查找
-        UserInfo user = userCachService.getUserInfo(userName);
+       /* UserInfo user = userCachService.getUserInfo(userName);
         if(user != null){
            return user;
-        }
+        }*/
         LambdaQueryWrapper<UserInfo> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(UserInfo::getUsername,userName);
-        user = this.getOne(lambdaQueryWrapper);
+       UserInfo  user = this.getOne(lambdaQueryWrapper);
         if(user != null){
             //存入缓存中
-            userCachService.setUserInfo(user);
+            //userCachService.setUserInfo(user);
             return user;
         }
         return null;
@@ -122,20 +122,44 @@ public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> i
     public String login(UserVo userVo){
         UserInfo userInfo = new UserInfo();
         BeanUtil.copyProperties(userVo,userInfo);
+        //如果没有姓名直接返回空
+        if(StrUtil.isBlank(userInfo.getUsername())){
+            return null;
+        }
+        UserInfo loginUser = getUserByUserName(userVo.getUsername());
         String token = null;
-        try{
-            UserDetails userDetails = loadUserByUserName(userInfo.getUsername());
-            if(!passwordEncoder.matches(userInfo.getPassword(),userDetails.getPassword())){
-                Assert.fail("用户密码错误");
-            }
-            if(!userDetails.isEnabled()){
-                Assert.fail("用户以禁用");
-            }
+        UserDetails userDetails = null;
+        //如果没有对应名字的用户,直接注册
+        if(loginUser == null){
+            BeanUtil.copyProperties(userVo,userInfo);
+            //设置状态
+            userInfo.setStatus(1);
+            userInfo.setCreateTime(LocalDateTime.now());
+            //对密码进行加密操作
+            String ecodePassWord = passwordEncoder.encode(userInfo.getPassword());
+            userInfo.setPassword(ecodePassWord);
+            this.save(userInfo);
+            //进行登入
+            userDetails = new AdminUserDetails(userInfo,null);
             UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails,userDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
             token = jwtTokenUtil.generateToken(userDetails);
-        }catch (AuthenticationException e){
-            LOGGER.warn("登录异常:{}", e.getMessage());
+        }else{
+            List<UserResoures> resoures = getResource(loginUser.getId());
+            userDetails = new AdminUserDetails(loginUser,resoures);
+            try{
+                if(!passwordEncoder.matches(userInfo.getPassword(),userDetails.getPassword())){
+                    Assert.fail("用户密码错误");
+                }
+                if(!userDetails.isEnabled()){
+                    Assert.fail("用户以禁用");
+                }
+                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(userDetails,userDetails.getAuthorities());
+                SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                token = jwtTokenUtil.generateToken(userDetails);
+            }catch (Exception e){
+                LOGGER.warn("登录异常:{}", e.getMessage());
+            }
         }
         return token;
     }

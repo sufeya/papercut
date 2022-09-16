@@ -46,7 +46,6 @@
         <minio.version>7.1.0</minio.version>
         <papercut-common.version>1.0-SNAPSHOT</papercut-common.version>
         <papercut-mbg.version>1.0-SNAPSHOT</papercut-mbg.version>
-        <mall-security.version>1.0-SNAPSHOT</mall-security.version>
     </properties>
 
     <dependencies>
@@ -222,24 +221,32 @@
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-maven-plugin</artifactId>
                 </plugin>
-                <!-- Docker maven plugin -->
                 <plugin>
                     <groupId>com.spotify</groupId>
                     <artifactId>docker-maven-plugin</artifactId>
-                    <version>1.0.0</version>
                     <configuration>
-                        <imageName>${docker.image.prefix}/${project.artifactId}</imageName>
-                        <dockerDirectory>src/main/docker</dockerDirectory>
+                        <!-- 镜像名称  -->
+                        <imageName>${project.artifactId}</imageName>
+                        <!-- Dockerfile 文件目录 -->
+                        <dockerDirectory>${project.basedir}/document/docker</dockerDirectory>
+                        <!-- docker远程服务地址 ，前提是docker服务器需开启远程访问-->
+                        <dockerHost>http://118.31.37.117:2375</dockerHost>
                         <resources>
                             <resource>
                                 <targetPath>/</targetPath>
+                                <!-- 资源所在目录 -->
                                 <directory>${project.build.directory}</directory>
+                                <!-- 生成的.jar文件 -->
                                 <include>${project.build.finalName}.jar</include>
+                            </resource>
+                            <resource>
+                                <targetPath>/</targetPath>
+                                <!-- 资源所在目录 -->
+                                <directory>${project.build.outputDirectory}</directory>
                             </resource>
                         </resources>
                     </configuration>
                 </plugin>
-                <!-- Docker maven plugin -->
             </plugins>
         </pluginManagement>
     </build>
